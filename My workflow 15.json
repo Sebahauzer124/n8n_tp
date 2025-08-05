@@ -1,0 +1,513 @@
+{
+  "name": "My workflow 15",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {
+          "fileName": ""
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -2352,
+        -416
+      ],
+      "id": "71e94750-d92c-424c-8196-7ab1a36b38b4",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "XMNUL2x9SYetLK3e",
+          "name": "Google Drive account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a28dd62b-a7aa-489b-b65f-22bdf2b0973e",
+              "leftValue": "={{ $json.name }}",
+              "rightValue": "descargado",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -2816,
+        -480
+      ],
+      "id": "e1caacd5-4cf9-46e8-abe2-36187721a027",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Devuelvo solo el primer item completo (archivo completo)\nreturn [$input.first()];\n\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2512,
+        -528
+      ],
+      "id": "49c1103b-d8a2-4572-904c-bdc8cbe959b7",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "1kgZx8I7s4kcHi5Emu_L54VatQXo69_pH",
+            "mode": "list",
+            "cachedResultName": "arti",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1kgZx8I7s4kcHi5Emu_L54VatQXo69_pH"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -3056,
+        -480
+      ],
+      "id": "07732f48-45e0-4d45-8cdc-0cb2d372e55d",
+      "name": "Search files and folders",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "XMNUL2x9SYetLK3e",
+          "name": "Google Drive account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "11bnVkraR79uo13hHHfr1hk_VILvM8kv2",
+          "mode": "list",
+          "cachedResultName": "agente_personal",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/11bnVkraR79uo13hHHfr1hk_VILvM8kv2"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -2000,
+        16
+      ],
+      "id": "cc6708cb-3173-4077-a9a3-9ff54de59419",
+      "name": "Move file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "XMNUL2x9SYetLK3e",
+          "name": "Google Drive account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Obtener directamente el base64 que ya está en el binario\nconst base64Data = items[0].binary.data; // ¡Ya es base64! No hay que reconvertir\n\n// Crear nombre dinámico con fecha y hora\nconst now = new Date();\nconst timestamp = now.toISOString().replace(/[:.]/g, '-');\nconst fileName = `imagen_subida_${timestamp}.png`;\n\n// Retornar objeto JSON para el nodo de GitHub\nreturn [{\n  json: {\n    message: `Subida automática - ${timestamp}`,\n    content: base64Data,\n    branch: 'main',\n    path: fileName\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1680,
+        -432
+      ],
+      "id": "46871e9b-87c8-4835-9dd9-ddfbe22b01a0",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "owner": {
+          "__rl": true,
+          "value": "=sebahauzer124",
+          "mode": "name"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "fotos",
+          "mode": "list",
+          "cachedResultName": "fotos",
+          "cachedResultUrl": "https://github.com/Sebahauzer124/fotos"
+        },
+        "filePath": "={{ $json.path }}",
+        "fileContent": "={{ $json.content.data }}",
+        "commitMessage": "={{ $json.branch }}"
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        -1328,
+        -432
+      ],
+      "id": "2301b26f-9d7f-455e-be67-95222c2b0695",
+      "name": "Create a file",
+      "webhookId": "68fddc6a-b1ba-4f57-9ec2-add28d1f023d",
+      "credentials": {
+        "githubApi": {
+          "id": "zidzTioF2lzDt2lM",
+          "name": "GitHub account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://api.github.com/repos/Sebahauzer124/fotos/contents",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "githubApi",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1024,
+        -432
+      ],
+      "id": "1a240309-b27f-4df8-a885-1a8ae9d2708b",
+      "name": "HTTP Request",
+      "credentials": {
+        "githubApi": {
+          "id": "zidzTioF2lzDt2lM",
+          "name": "GitHub account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Filtrar solo imágenes válidas con download_url\nconst imagenes = items.filter(item => {\n  const name = item?.json?.name?.toLowerCase?.() || '';\n  const isImage = /\\.(png|jpe?g|gif)$/i.test(name);\n  return isImage && item.json.download_url;\n});\n\n// 2. Ordenar por fecha (la más reciente primero)\nimagenes.sort((a, b) => {\n  const fechaA = extraerFecha(a.json.name);\n  const fechaB = extraerFecha(b.json.name);\n  return fechaB - fechaA;\n});\n\n// 3. Devolver solo la imagen más reciente\nreturn imagenes.slice(0, 1);\n\n// 4. Función para extraer la fecha del nombre del archivo\nfunction extraerFecha(nombre) {\n  // Buscar fecha tipo 2025-08-05T17-49-11-477Z\n  const match = nombre.match(/\\d{4}-\\d{2}-\\d{2}T\\d{2}-\\d{2}-\\d{2}-\\d{3}Z/);\n  if (!match) return 0;\n\n  // Convertir a formato válido para Date: 2025-08-05T17:49:11.477Z\n  const fechaStr = match[0]\n    .replace(/T(\\d{2})-(\\d{2})-(\\d{2})-(\\d{3})Z/, 'T$1:$2:$3.$4Z');\n\n  return new Date(fechaStr).getTime();\n}\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -688,
+        -432
+      ],
+      "id": "ca774d41-3a96-4a7f-8868-ab756144f6fd",
+      "name": "Code2"
+    },
+    {
+      "parameters": {
+        "jsCode": "const files = items; // todos filtrados\n\n// Tomo el último archivo\nconst lastFile = files[files.length - 1];\n\nreturn [ { json: lastFile } ];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -336,
+        -432
+      ],
+      "id": "02d419f1-2440-4fbe-bb5c-ebbecac32c5d",
+      "name": "Code3"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://hook.us2.make.com/fpah5q8srb748izd0d95uy63v95py7pc",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "file_name",
+              "value": "={{ $json.json.name }}"
+            },
+            {
+              "name": "download_url",
+              "value": "={{ $json.json.download_url }}"
+            },
+            {
+              "name": "mensaje",
+              "value": "={{ $('Message a model').all() }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -96,
+        -432
+      ],
+      "id": "9c1e942d-0f84-47ee-9de0-e58f7d6e29d4",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "prompt": "=\"Beautiful natural cosmetics gadgets and packaging, inspired by {{ $json.name }}, with fresh green leaves and soft light\"",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -1968,
+        -448
+      ],
+      "id": "86ed0eed-3d2c-4484-b040-2d9074d2461b",
+      "name": "Generate an image",
+      "credentials": {
+        "openAiApi": {
+          "id": "7mvXCzvob9edzQ4E",
+          "name": "OpenAi account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "Escribí un posteo para Instagram que hable sobre los beneficios de nuestras cremas naturales de Artilugios Cosmética Natural. El tono debe ser cálido, cercano y profesional. Mencioná que están hechas con ingredientes naturales, sin químicos agresivos, ideales para hidratar y cuidar la piel. Invitá a las personas a probarlas y a conocer más en nuestro perfil. Incluí hasta 5 hashtags relevantes."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -1120,
+        16
+      ],
+      "id": "f04193be-e601-4806-b3b7-fd5c6db4f03d",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "7mvXCzvob9edzQ4E",
+          "name": "OpenAi account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 20
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -3376,
+        -480
+      ],
+      "id": "9bb6969e-5d8d-405b-a247-569de954eb4f",
+      "name": "Schedule Trigger"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Move file",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Generate an image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search files and folders": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Create a file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a file": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code2": {
+      "main": [
+        [
+          {
+            "node": "Code3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code3": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Move file": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate an image": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Search files and folders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Argentina/Buenos_Aires",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "94879984-4b0a-4f65-8736-3715b21b78c8",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e114ed4ddc45810a0ffe076d2f6312a44c3aa660c7f6d46d8d9d8d5bb7ea9f62"
+  },
+  "id": "VIi19jh60gml6BFI",
+  "tags": []
+}
