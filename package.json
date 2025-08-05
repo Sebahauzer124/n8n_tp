@@ -1,0 +1,11 @@
+{
+  "name": "n8n_tp",
+  "version": "1.0.0",
+  "description": "Instancia de n8n para Render",
+  "scripts": {
+    "start": "n8n"
+  },
+  "dependencies": {
+    "n8n": "^1.49.0"
+  }
+}
